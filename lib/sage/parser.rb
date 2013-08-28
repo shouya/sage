@@ -16,23 +16,12 @@ class Parser
       raise Exception, "Parse error at offset: #{@@parser.index}"
     end
 
-#    clean_tree(tree)
     return tree
-  end
-
-  private
-  def self.clean_tree(root_node)
-    return if(root_node.elements.nil?)
-    root_node.elements.delete_if do |node|
-      node.class.name == "Treetop::Runtime::SyntaxNode"
-    end
-    root_node.elements.each {|node| self.clean_tree(node) }
   end
 end
 
 
 if __FILE__ == $0
-  require 'ap'
-  ap Parser.parse('(\m.e b a)x y').parse
+  p Parser.parse('(\m.e b a)x y').parse
 end
 
