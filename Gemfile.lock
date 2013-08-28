@@ -1,0 +1,13 @@
+GEM
+  remote: http://ruby.taobao.org/
+  specs:
+    polyglot (0.3.3)
+    treetop (1.4.15)
+      polyglot
+      polyglot (>= 0.3.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  treetop

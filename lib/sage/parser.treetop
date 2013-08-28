@@ -1,0 +1,38 @@
+
+
+grammar Sage
+  rule expression
+    '(' expression ')' !applicants <Parentheses> /
+    lambda / application / name
+  end
+
+  rule partial_expr
+    '(' expression ')' <Parentheses> / lambda / name
+  end
+
+  rule applicants
+    (space? partial_expr)+
+  end
+
+  rule application
+    partial_expr applicants  <Application>
+  end
+  rule lambda
+    lambda_indicator space? name space? dot space? expression <Lambda>
+  end
+
+  rule name
+    [a-z]+ <Identifier>
+  end
+
+  rule lambda_indicator
+    '\\'
+  end
+  rule space
+    [\s\n\r\t]+
+  end
+  rule dot
+    "."
+  end
+
+end
