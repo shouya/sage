@@ -1,27 +1,29 @@
 require 'treetop'
 
-require File.expand_path(File.dirname(__FILE__), 'parser_nodes')
+require File.join(File.dirname(__FILE__), 'parser_nodes')
 
-class Parser
-  Treetop.load(File.expand_path(File.dirname(__FILE__),
-                                'parser.treetop'))
-  @@parser = SageParser.new
+module Sage
+  class Parser
+    Treetop.load(File.join(File.dirname(__FILE__),
+                           'parser.treetop'))
+    @@parser = SageParser.new
 
-  def self.parse(data)
-    tree = @@parser.parse(data)
-    @@parser.root = :program
+    def self.parse(data)
+      tree = @@parser.parse(data)
+      @@parser.root = :program
 
-    if tree.nil?
-      p @@parser
-      raise Exception, "Parse error at offset: #{@@parser.index}"
+      if tree.nil?
+        p @@parser
+        raise Exception, "Parse error at offset: #{@@parser.index}"
+      end
+
+      return tree
     end
-
-    return tree
   end
 end
 
-
 if __FILE__ == $0
-  p Parser.parse('(\m.e b a)x y').parse
+  require 'ap'
+  ap Sage::Parser.parse('\m.e b a').parse.to_s
 end
 

@@ -1,38 +1,44 @@
 
-module Sage
-  class Expression < Treetop::Runtime::SyntaxNode
-  end
 
-  class Identifier < Expression
+require File.join(File.dirname(__FILE__), 'identifier')
+require File.join(File.dirname(__FILE__), 'lambda')
+require File.join(File.dirname(__FILE__), 'application')
+
+module Sage
+  class ExpressionNode < Treetop::Runtime::SyntaxNode
+    def to_array
+      parse.to_array
+    end
+  end
+  class IdentifierNode < ExpressionNode
     def parse
-      @name = text_value
-      return @name.intern
+      return Identifier.new text_value.intern
     end
   end
 
-  class Application < Expression
+  class ApplicationNode < ExpressionNode
     def parse
       @lambda = elements[0].parse
       @applicants = elements[1].elements.map {|x| x.elements[1].parse }
 
       applicants_copy = @applicants.dup
-      result = [@lambda, applicants_copy.shift]
+      result = Application.new(@lambda, applicants_copy.shift)
 
       until applicants_copy.empty?
-        result = [result, applicants_copy.shift]
+        result = Application.new(result, applicants_copy.shift)
       end
       return result
     end
   end
 
-  class Lambda < Expression
+  class LambdaNode < ExpressionNode
     def parse
       @argument, @body = elements.values_at(2, 6).map(&:parse)
-      return [:lambda, @argument, @body]
+      return Lambda.new(@argument, @body)
     end
   end
 
-  class Parentheses < Expression
+  class ParenthesesNode < ExpressionNode
     def parse
       return elements[1].parse
     end
