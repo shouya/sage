@@ -30,7 +30,7 @@ module Sage
       end
     end
 
-    def reduce
+    def reduce(*)
       self
     end
     alias_method :reduce_step, :reduce

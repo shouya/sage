@@ -57,6 +57,7 @@ module Sage
         warn 'step limit exceeded;'
         return result
       end
+
       if Application === result
         return result.reduce(limits - 1)
       end

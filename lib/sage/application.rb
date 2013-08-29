@@ -34,7 +34,7 @@ module Sage
       if Lambda === lambda
         return lambda.apply_step(applicant)
       else
-        return self
+        return Application.new(lambda, applicant)
       end
     end
     def reduce(limit = REDUCTION_LIMITS)
@@ -43,7 +43,7 @@ module Sage
       if Lambda === lambda
         return lambda.apply(applicant, limit - 1)
       else
-        return self
+        return Application.new(lambda, applicant)
       end
     end
   end

@@ -10,7 +10,6 @@ module Sage
 
     def self.parse(data)
       tree = @@parser.parse(data)
-      @@parser.root = :program
 
       if tree.nil?
         p @@parser
