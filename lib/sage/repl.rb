@@ -8,15 +8,60 @@ require File.join(File.dirname(__FILE__), 'parser')
 module Sage
   class REPL
     attr_accessor :parser, :options
+
+    BUILTIN_COMBINATORS = {
+      :Y     => '\f.(\x.f (x x)) (\x.f (x x))',
+      :succ  => '\n.\f.\x.f (n f x)',
+      :pred  => '\n.\f.\x.n (\g.\h.h (g f)) (\u.x) (\u.u)',
+
+      :zero  => '\f.\x.x',
+      :one   => '\f.\x.f x',
+      :two   => 'succ one',
+      :three => 'succ two',
+      :four  => 'succ three',
+      :five  => 'succ four',
+      :six   => 'succ five',
+      :seven => 'succ six',
+      :eight => 'succ seven',
+      :nine  => 'succ eight',
+      :ten   => 'succ nine',
+
+      :plus  => '\m.\n.\f.\x.m f (n f x)',
+      :sub   => '\m.\n.(n pred) m',
+      :mult  => '\m.\n.\f.m (n f)',
+      :exp   => '\m.\n.n m',
+
+      :true  => '\a.\b.a',
+      :false => '\a.\b.b',
+
+      :and   => '\m.\n.m n m',
+      :or    => '\m.\n.m m n',
+      :not   => '\m.\a.\b.m b a',
+      :not1  => '\m.m (\a.\b.b) (\a.\b.a)',
+      :if    => '\m.\a.\b.m a b',
+
+      :cons  => '\x.\y.\z.z x y',
+      :car   => '\c.c (\x.\y.x)',
+      :cdr   => '\c.c (\x.\y.y)',
+      :nil   => 'pair true true',
+      :ispair =>'car'
+    }
+
     def initialize
       @parser = SageParser.new
+      @context = Context.new
       @options = {
-        :reduce  => [:bool, false],  # reduce lambda?
+        :reduce  => [:bool, true],   # reduce lambda?
         :step    => [:bool, false],  # show reduction steps?
         :onestep => [:bool, false],  # reduce only one step?
         :limit   => [:int,  100],    # reduce limit
         :textout => [:bool, true]    # text or list output
       }
+
+      BUILTIN_COMBINATORS.each do |name, lamb|
+        puts name, lamb
+        @context.store(name, @parser.parse(lamb).parse.reduce(@context))
+      end
     end
 
     def start
@@ -46,18 +91,18 @@ module Sage
         option = line.sub(/^\:set\s*/, '').strip
         return [:set, [:on,    option[1..-1]]] if option[0] == '+'
         return [:set, [:off,   option[1..-1]]] if option[0] == '-'
-        return [:set, [:set,  *option.strip.split(/\s+/)]]
+        return [:set, [:set,  *option.strip.split(/\s+/, 2)]]
       end
 
       return [:options, nil] if line[/^\:options$/]
 
       if line[/^\:let\s*/]
-        name, lamb = *line.sub(/^\:let\s*/).split(/\s/)
+        name, lamb = *line.sub(/^\:let\s*/, '').split(/\s+/, 2)
         lamb = parse_multiline(lamb, 'let.> ')
         return [:error, nil] if lamb[0] == :error
-        return [:let, [name, lamb]]
+        return [:let, [name, lamb[1]]]
       end
-      return [:undef, line.sub(/^\:undef\s*/).strip] if line[/^\:undef\s*/]
+      return [:undef, line.sub(/^\:undef\s*/, '').strip] if line[/^\:undef\s*/]
 
       parse_result = parse_multiline(line, ps2)
       return [:error, nil] if parse_result[0] == :error
@@ -104,10 +149,10 @@ module Sage
     end
 
     def define(name, value)
-      # todo
+      @context[name.intern] = eval_lambda(value)
     end
-    def undefine(name, value)
-      # todo
+    def undefine(name)
+      @context.delete(name.intern)
     end
     def query_options
       puts "name\ttype\tvalue"
@@ -121,13 +166,7 @@ module Sage
     end
 
     def evaluate(lambda)
-      if !opt(:reduce) and !opt(:onestep)
-        puts show_lambda(lambda)
-      elsif opt(:onestep)
-        puts show_lambda(lambda.reduce_step)
-      elsif opt(:reduce)
-        puts show_lambda(lambda.reduce(opt(:limit)))
-      end
+      puts show_lambda(eval_lambda(lambda))
     end
 
     private
@@ -142,5 +181,18 @@ module Sage
         lambda.to_array.to_s
       end
     end
+
+    def eval_lambda(lambda)
+      if !opt(:reduce) and !opt(:onestep)
+        lambda = lambda.reduce_step(@context) if Identifier === lambda
+        return lambda
+      elsif opt(:onestep)
+        lambda.reduce_step(@context)
+      elsif opt(:reduce)
+        lambda.reduce(@context, opt(:limit))
+      end
+    end
+
+
   end
 end

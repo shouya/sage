@@ -28,20 +28,20 @@ module Sage
                              @applicant.substitute(a, b))
     end
 
-    def reduce_step
-      lambda = @lambda.reduce_step
-      applicant = @applicant.reduce_step
+    def reduce_step(context)
+      lambda = @lambda.reduce_step(context)
+      applicant = @applicant.reduce_step(context)
       if Lambda === lambda
-        return lambda.apply_step(applicant)
+        return lambda.apply_step(applicant, context)
       else
         return Application.new(lambda, applicant)
       end
     end
-    def reduce(limit = REDUCTION_LIMITS)
-      lambda = @lambda.reduce(limit - 1)
-      applicant = @applicant.reduce(limit - 1)
+    def reduce(context, limit = REDUCTION_LIMITS)
+      lambda = @lambda.reduce(context, limit - 1)
+      applicant = @applicant.reduce(context, limit - 1)
       if Lambda === lambda
-        return lambda.apply(applicant, limit - 1)
+        lambda = lambda.apply(applicant, context, limit - 1)
       else
         return Application.new(lambda, applicant)
       end

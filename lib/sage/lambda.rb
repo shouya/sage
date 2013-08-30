@@ -48,19 +48,32 @@ module Sage
     end
     alias_method :reduce_step, :reduce
 
-    def apply_step(expr)
-      @body.substitute(@argument.name, expr)
+    def simplify(context, limit = REDUCTION_LIMITS)
+      if Lambda === @body
+        body = @body.simplify(context, limit)
+      else
+        body = @body.reduce(context, limit)
+      end
+      return Lambda.new(@argument, body)
     end
-    def apply(expr, limits = REDUCTION_LIMITS)
-      result = apply_step(expr)
-      if limits <= 0
+
+    def apply_step(expr, context)
+      @body.substitute(@argument.name, expr)
+      return simplify(context)
+    end
+    def apply(expr, context, limit = REDUCTION_LIMITS)
+      result = @body.substitute(@argument.name, expr)
+      result = result.simplify(context, limit) if Lambda === result
+
+      if limit <= 0
         warn 'step limit exceeded;'
         return result
       end
 
       if Application === result
-        return result.reduce(limits - 1)
+        return result.reduce(context, limit - 1)
       end
+      result
     end
   end
 end

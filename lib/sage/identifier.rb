@@ -30,10 +30,14 @@ module Sage
       end
     end
 
-    def reduce(*)
-      self
+    def reduce(context, limit = REDUCTION_LIMITS)
+      return context[@name] if context.key? @name
+      return self
     end
-    alias_method :reduce_step, :reduce
+    def reduce_step(context)
+      return context[@name] if context.key? @name
+      return self
+    end
 
   end
 
