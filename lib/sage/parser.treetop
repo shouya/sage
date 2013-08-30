@@ -1,38 +1,38 @@
 
+module Sage
+  grammar Sage
+    rule expression
+      '(' expression ')' !applicants <ParenthesesNode> /
+      lambda / application / name
+    end
 
-grammar Sage
-  rule expression
-    '(' expression ')' !applicants <ParenthesesNode> /
-    lambda / application / name
-  end
+    rule partial_expr
+      '(' expression ')' <ParenthesesNode> / lambda / name
+    end
 
-  rule partial_expr
-    '(' expression ')' <ParenthesesNode> / lambda / name
-  end
+    rule applicants
+      (space? partial_expr)+
+    end
 
-  rule applicants
-    (space? partial_expr)+
-  end
+    rule application
+      partial_expr applicants  <ApplicationNode>
+    end
+    rule lambda
+      lambda_indicator space? name space? dot space? expression <LambdaNode>
+    end
 
-  rule application
-    partial_expr applicants  <ApplicationNode>
-  end
-  rule lambda
-    lambda_indicator space? name space? dot space? expression <LambdaNode>
-  end
+    rule name
+      [a-z]+ <IdentifierNode>
+    end
 
-  rule name
-    [a-z]+ <IdentifierNode>
+    rule lambda_indicator
+      '\\'
+    end
+    rule space
+      [\s\n\r\t]+
+    end
+    rule dot
+      "."
+    end
   end
-
-  rule lambda_indicator
-    '\\'
-  end
-  rule space
-    [\s\n\r\t]+
-  end
-  rule dot
-    "."
-  end
-
 end
