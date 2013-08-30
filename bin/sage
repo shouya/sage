@@ -3,48 +3,6 @@
 # Sage REPL
 #
 
-require File.join(File.dirname(__FILE__), '../lib/sage')
+require File.join(File.dirname(__FILE__), '../lib/sage/repl')
 
-require 'readline'
-
-
-def repl
-  while line = Readline.readline('> ', true)
-    return nil if line.nil?
-    (Readline::HISTORY.pop; next) if line =~ /^\s*$/
-    Readline::HISTORY.pop if Readline::HISTORY.to_a[-2] == line
-
-    if %w(quit exit).include? line
-      puts 'Use \':quit\' or Ctrl-D (i.e. EOF) to exit'
-    end
-
-    parser = Sage::SageParser.new
-    tree = nil
-    while tree.nil?
-      tree = parser.parse(line)
-      if tree.nil? and parser.failure_index == line.length
-        line << "\n" << Readline.readline('.. ', true)
-      elsif tree.nil?
-        report_syntax_error(parser)
-        break
-      end
-    end
-
-    next if tree.nil?
-
-    puts tree.parse.to_s
-  end
-end
-
-def report_syntax_error(parser)
-  puts "Syntax Error: " + parser.failure_reason
-  puts "\tfrom (interative):#{parser.failure_line}:#{parser.failure_column}"
-end
-
-def main
-  repl
-end
-
-main if __FILE__ == $0
-
-
+Sage::REPL.new.start if __FILE__ == $0
