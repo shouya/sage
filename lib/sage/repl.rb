@@ -4,7 +4,6 @@ require 'readline'
 
 require File.expand_path('../sage', File.dirname(__FILE__))
 require File.expand_path('parser', File.dirname(__FILE__))
-require File.expand_path('built_ins', File.dirname(__FILE__))
 
 module Sage
   class REPL
@@ -15,7 +14,7 @@ module Sage
       @context = Context.new
       @options = {
         :reduce  => [:bool, true],   # reduce lambda?
-        :step    => [:bool, false],  # show reduction steps?
+        :step    => [:bool, true],   # show reduction steps?
         :onestep => [:bool, false],  # reduce only one step?
         :limit   => [:int,  100],    # reduce limit
         :textout => [:bool, true]    # text or list output
@@ -126,7 +125,17 @@ module Sage
     end
 
     def evaluate(lambda)
-      puts show_lambda(eval_lambda(lambda))
+      if opt(:reduce) and not opt(:onestep) and opt(:step)
+        this = prev = lambda
+        1.upto(opt(:limit)) do |n|
+          this, prev = this.reduce_step(@context), this
+          puts "#{n}: #{prev}"
+          return if this == prev
+        end
+        puts "Reduce limit exceeded."
+      else
+        puts show_lambda(eval_lambda(lambda))
+      end
     end
 
     private
@@ -143,7 +152,7 @@ module Sage
     end
 
     def eval_lambda(lambda)
-      if !opt(:reduce) and !opt(:onestep)
+      if !opt(:reduce)
         lambda = lambda.reduce_step(@context) if Identifier === lambda
         return lambda
       elsif opt(:onestep)
