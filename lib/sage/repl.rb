@@ -48,6 +48,8 @@ module Sage
       (Readline::HISTORY.pop; return [:empty]) if line =~ /^\s*$/
       Readline::HISTORY.pop if Readline::HISTORY.to_a[-2] == line
 
+      return [:eof, nil] if %w[:quit :exit :q].include?(line.strip)
+
       if line[/^\:set\s*/]
         option = line.sub(/^\:set\s*/, '').strip
         return [:set, [:on,    option[1..-1]]] if option[0] == '+'
