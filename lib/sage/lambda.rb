@@ -11,6 +11,12 @@ module Sage
       @body = body
     end
 
+    # alpha equivalent
+    def ==(another)
+      return false unless Lambda === another
+      return true if @argument == another.argument and @body == another.body
+      @body == another.body.substitute(@argument, Identifier.new(@argument))
+    end
     def to_array
       [:lambda, @argument, @body.to_array]
     end

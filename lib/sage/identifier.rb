@@ -8,6 +8,10 @@ module Sage
       @name = name.intern
     end
 
+    def ==(another)
+      return false unless Identifier === another
+      @name == another.name
+    end
     def to_array
       @name
     end

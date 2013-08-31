@@ -8,6 +8,11 @@ module Sage
       @applicant = applicant
     end
 
+    def ==(another)
+      return false unless Application === another
+      @lambda == another.another and @applicant == another.applicant
+    end
+
     def to_array
       [@lambda.to_array, @applicant.to_array]
     end
