@@ -98,8 +98,8 @@ module Sage
         return
       end
 
-      switch == :on  and @options[option][1] = true  and return
-      switch == :off and @options[option][1] = false or  return
+      switch == :on  and (@options[option][1] = true  and return)
+      switch == :off and (@options[option][1] = false or  return)
 
       case @options[option][0]
       when :int  then @options[option][1] = value.to_s
