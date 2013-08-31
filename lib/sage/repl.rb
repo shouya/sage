@@ -13,11 +13,12 @@ module Sage
       @parser = SageParser.new
       @context = Context.new
       @options = {
-        :reduce  => [:bool, true],   # reduce lambda?
-        :step    => [:bool, true],   # show reduction steps?
-        :onestep => [:bool, false],  # reduce only one step?
-        :limit   => [:int,  30],     # reduce limit
-        :textout => [:bool, true]    # text or list output
+        :reduce  => [:bool, true],    # reduce lambda?
+        :step    => [:bool, true],    # show reduction steps?
+        :onestep => [:bool, false],   # reduce only one step?
+        :limit   => [:int,  30],      # reduce limit
+        :textout => [:bool, true],    # text or list output
+        :parseresult => [:bool, true]
       }
 
       @context.load_builtin_combinators(@parser)
@@ -140,12 +141,13 @@ module Sage
         this = prev = lambda
         1.upto(opt(:limit)) do |n|
           this, prev = this.reduce_step(@context), this
-          puts "#{n}: #{prev}"
-          return if this == prev
+          puts "#{n}: #{show_lambda(prev)}"
+
+          this == prev and return output(this)
         end
         puts "Reduction limit exceeded."
       else
-        puts show_lambda(eval_lambda(lambda))
+        output(eval_lambda(lambda))
       end
     end
 
@@ -157,6 +159,13 @@ module Sage
     private
     def opt(name)
       @options[name][1]
+    end
+
+    def parse_result(result)
+      opt(:parseresult) and @context.each do |k,v|
+        return k.to_s if result == v
+      end
+      false
     end
 
     def show_lambda(lambda)
@@ -176,6 +185,11 @@ module Sage
       elsif opt(:reduce)
         lambda.reduce(@context, opt(:limit))
       end
+    end
+
+    def output(result)
+      rst = parse_result(result) and print "<#{rst}>: "
+      puts show_lambda(result)
     end
 
 

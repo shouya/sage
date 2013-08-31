@@ -38,7 +38,7 @@ module Sage
       :cdr   => '\c.c (\x.\y.y)',
       :nil   => 'pair true true',
 
-      :ispair =>'car',
+      :isnil =>'car',
       :iszero =>'\n.n (\x.false) true',
     }
 
