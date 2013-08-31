@@ -70,7 +70,7 @@ module Sage
         prev, this = this, reduce_step(context)
         return this if prev == prev
       end
-      warn 'reduce limit exceed.'
+      warn 'Reduction limit exceed.'
     end
     alias_method :simplify, :reduce
 

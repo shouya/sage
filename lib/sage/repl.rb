@@ -16,7 +16,7 @@ module Sage
         :reduce  => [:bool, true],   # reduce lambda?
         :step    => [:bool, true],   # show reduction steps?
         :onestep => [:bool, false],  # reduce only one step?
-        :limit   => [:int,  100],    # reduce limit
+        :limit   => [:int,  30],     # reduce limit
         :textout => [:bool, true]    # text or list output
       }
 
@@ -102,7 +102,7 @@ module Sage
       switch == :off and (@options[option][1] = false or  return)
 
       case @options[option][0]
-      when :int  then @options[option][1] = value.to_s
+      when :int  then @options[option][1] = value.to_i
       when :bool then @options[option][1] = value.downcase.start_with?('t')
       end
     end
