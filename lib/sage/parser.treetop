@@ -1,6 +1,21 @@
 
 module Sage
   grammar Sage
+    rule single_expression
+      space? expression space? { def parse; elements[1].parse; end }
+    end
+
+    rule paired_expression
+      space? name space? expression space? !expression {
+         def parse; elements.values_at(1,3).map(&:parse); end } /
+      space? lambda space? expression space? !expression {
+         def parse; elements.values_at(1,3).map(&:parse); end } /
+      space? '(' expression ')' space? expression space? !expression {
+         def parse; elements.values_at(2,5).map(&:parse); end } /
+      space? expression space? expression space? {
+         def parse; elements.values_at(1,3).map(&:parse); end }
+    end
+
     rule expression
       '(' expression ')' !applicants <ParenthesesNode> /
       lambda / application / name

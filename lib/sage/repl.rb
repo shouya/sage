@@ -35,6 +35,7 @@ module Sage
         when :undef   then undefine(result); next
         when :options then query_options; next
         when :ok      then evaluate(result); next
+        when :eqv     then beta_eqv(*result); next
         end
       end
     end
@@ -58,21 +59,30 @@ module Sage
       if line[/^\:let\s*/]
         name, lamb = *line.sub(/^\:let\s*/, '').split(/\s+/, 2)
         lamb = parse_multiline(lamb, 'let.> ')
+        # todo: readline history fix
         return [:error, nil] if lamb[0] == :error
         return [:let, [name, lamb[1]]]
       end
       return [:undef, line.sub(/^\:undef\s*/, '').strip] if line[/^\:undef\s*/]
+
+      if line[/^:eqv/]
+        lamb = line.sub(/^\:eqv\s*/, '')
+        result = parse_multiline(lamb, 'eqv.> ', :root => :paired_expression)
+        # todo: readline history fix
+        return [:error, nil] if result[0] == :error
+        return [:eqv, result[1]]
+      end
 
       parse_result = parse_multiline(line, ps2)
       return [:error, nil] if parse_result[0] == :error
       return [:ok, parse_result[1]]
     end
 
-    def parse_multiline(first_line, ps2 = '....> ')
+    def parse_multiline(first_line, ps2 = '....> ', options = {})
       line = first_line
       tree = nil
       while tree.nil?
-        tree = @parser.parse(line)
+        tree = @parser.parse(line, options)
         if tree.nil? and @parser.failure_index == line.length
           Readline::HISTORY.pop
           line << "\n" << Readline.readline(ps2, false)
@@ -82,6 +92,7 @@ module Sage
         end
       end
 
+      return [:ok, tree.map(&:parse)] if Array === tree
       return [:ok, tree.parse]
     end
 
@@ -136,6 +147,11 @@ module Sage
       else
         puts show_lambda(eval_lambda(lambda))
       end
+    end
+
+    def beta_eqv(a, b)
+      result = a.reduce(@context) == b.reduce(@context)
+      puts result
     end
 
     private
