@@ -1,8 +1,8 @@
 
 
-require File.join(File.dirname(__FILE__), 'sage/parser')
-require File.join(File.dirname(__FILE__), 'sage/identifier')
-require File.join(File.dirname(__FILE__), 'sage/lambda')
-require File.join(File.dirname(__FILE__), 'sage/application')
-require File.join(File.dirname(__FILE__), 'sage/context')
+require File.expand_path('sage/parser', File.dirname(__FILE__))
+require File.expand_path('sage/identifier', File.dirname(__FILE__))
+require File.expand_path('sage/lambda', File.dirname(__FILE__))
+require File.expand_path('sage/application', File.dirname(__FILE__))
+require File.expand_path('sage/context', File.dirname(__FILE__))
 

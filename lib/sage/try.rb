@@ -4,9 +4,9 @@ require_relative 'utilities'
 require 'ap'
 
 
-lbd = Sage::Parser.parse('(\x.x x y) (\x.x x y)').parse.tap{|x| puts x.to_s }
+lbd = Sage::SageParser.new.parse('(\x.x x y) (\x.x x y)')
 
 
 
 
-puts lbd.reduce_step.reduce_step
+puts lbd.reduce_step.reduce

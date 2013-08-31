@@ -2,8 +2,8 @@
 
 require 'readline'
 
-require File.join(File.dirname(__FILE__), '../sage')
-require File.join(File.dirname(__FILE__), 'parser')
+require File.expand_path('../sage', File.dirname(__FILE__))
+require File.expand_path('parser', File.dirname(__FILE__))
 
 module Sage
   class REPL

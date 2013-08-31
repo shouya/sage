@@ -1,7 +1,7 @@
 
-require File.join(File.dirname(__FILE__), 'identifier')
-require File.join(File.dirname(__FILE__), 'lambda')
-require File.join(File.dirname(__FILE__), 'application')
+require File.expand_path('identifier', File.dirname(__FILE__))
+require File.expand_path('lambda', File.dirname(__FILE__))
+require File.expand_path('application', File.dirname(__FILE__))
 
 
 module Sage

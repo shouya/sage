@@ -1,5 +1,5 @@
 
-require File.join(File.dirname(__FILE__), 'utilities')
+require File.expand_path('utilities', File.dirname(__FILE__))
 
 module Sage
   class Lambda
@@ -7,35 +7,35 @@ module Sage
 
     def initialize(argument, body)
       @argument = argument
+      @argument = @argument.name if Identifier === @argument
       @body = body
     end
 
     def to_array
-      [:lambda, @argument.to_array, @body.to_array]
+      [:lambda, @argument, @body.to_array]
     end
     def to_s
-      "\\#{@argument.name.to_s}.#{@body.to_s}"
+      "\\#{@argument.to_s}.#{@body.to_s}"
     end
 
     def variables
       @body.variables
     end
     def free_variables
-      @body.free_variables - [@argument.name]
+      @body.free_variables - [@argument]
     end
 
     def substitute(a, b)
-      arg_name = @argument.name
-      if a == arg_name or !free_variables.include?(a)
+      if a == @argument or !free_variables.include?(a)
         return self
       end
 
-      unless b.free_variables.include?(arg_name)
+      unless b.free_variables.include?(@argument)
         return Lambda.new(@argument, @body.substitute(a, b))
       end
 
-      new_arg_name = Sage.choose_name(b.free_variables +
-                                      @body.free_variables)
+      new_arg_name = ::Sage.choose_name(b.free_variables +
+                                        @body.free_variables)
       new_body = @body.substitute(@argument.name,
                                   Identifier.new(new_arg_name))
 
@@ -58,11 +58,13 @@ module Sage
     end
 
     def apply_step(expr, context)
-      @body.substitute(@argument.name, expr)
+      @body.substitute(@argument, expr)
       return simplify(context)
     end
+
+
     def apply(expr, context, limit = REDUCTION_LIMITS)
-      result = @body.substitute(@argument.name, expr)
+      result = @body.substitute(@argument, expr)
       result = result.simplify(context, limit) if Lambda === result
 
       if limit <= 0
