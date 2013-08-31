@@ -16,7 +16,9 @@ module Sage
     def ==(another)
       return false unless Lambda === another
       return true if @argument == another.argument and @body == another.body
-      @body == another.body.substitute(@argument, Identifier.new(@argument))
+
+      @body == another.body.substitute(another.argument,
+                                       Identifier.new(@argument))
     end
     def to_array
       [:lambda, @argument, @body.to_array]
@@ -43,7 +45,7 @@ module Sage
 
       new_arg_name = ::Sage.choose_name(b.free_variables +
                                         @body.free_variables)
-      new_body = @body.substitute(@argument.name,
+      new_body = @body.substitute(@argument,
                                   Identifier.new(new_arg_name))
 
       return Lambda.new(Identifier.new(new_arg_name),

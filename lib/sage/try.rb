@@ -5,11 +5,13 @@ require_relative 'context'
 require 'ap'
 
 
-lbd = Sage::SageParser.new.parse('succ one').parse
+lbd = Sage::SageParser.new.parse('(\x.x)').parse
+#lbd2 = Sage::SageParser.new.parse('(\x.x)').parse
+lbd2 = Sage::SageParser.new.parse('(\y.y)').parse
 ctx = Sage::Context.new
-ctx.load_builtin_combinators
+#ctx.load_builtin_combinators
 
 
-puts lbd.reduce(ctx).to_s
+puts lbd == lbd2
 
 
