@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 
 
 module Sage
@@ -33,12 +34,12 @@ module Sage
       :not1  => '\m.m (\a.\b.b) (\a.\b.a)',
       :if    => '\m.\a.\b.m a b',
 
-      :cons  => '\x.\y.\z.z x y',
+      :cons  => '\x.\y.\f.f x y',
       :car   => '\c.c (\x.\y.x)',
       :cdr   => '\c.c (\x.\y.y)',
-      :nil   => 'pair true true',
+      :nil   => '\x.true',
+      :isnil => '\p.p (\x.\y.false)',
 
-      :isnil =>'car',
       :iszero =>'\n.n (\x.false) true',
     }
 

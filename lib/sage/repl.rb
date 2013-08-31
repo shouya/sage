@@ -16,7 +16,7 @@ module Sage
         :reduce  => [:bool, true],    # reduce lambda?
         :step    => [:bool, true],    # show reduction steps?
         :onestep => [:bool, false],   # reduce only one step?
-        :limit   => [:int,  30],      # reduce limit
+        :limit   => [:int,  100],     # reduce limit
         :textout => [:bool, true],    # text or list output
         :parseresult => [:bool, true]
       }
