@@ -1,5 +1,6 @@
 
 require File.expand_path('utilities', File.dirname(__FILE__))
+require File.expand_path('context', File.dirname(__FILE__))
 
 module Sage
   class Lambda
@@ -49,39 +50,33 @@ module Sage
                         new_body.substitute(a, b))
     end
 
-    def reduce(*)
-      self
-    end
-    alias_method :reduce_step, :reduce
 
-    def simplify(context, limit = REDUCTION_LIMITS)
-      if Lambda === @body
-        body = @body.simplify(context, limit)
-      else
-        body = @body.reduce(context, limit)
+    def simplest?(context = Context.new)
+      return simplify(context) == self
+    end
+    def simplify_step(context)
+#      if Lambda === @body
+#        body = @body.simplify_step(context)
+#      else
+#        body = @body.reduce_step(context)
+#      end
+      return Lambda.new(@argument, @body.reduce_step(context))
+    end
+    alias_method :reduce_step, :simplify_step
+
+    def reduce(context, limit = REDUCTION_LIMITS)
+      prev = this = nil
+      limit.times do
+        prev, this = this, reduce_step(context)
+        return this if prev == prev
       end
-      return Lambda.new(@argument, body)
+      warn 'reduce limit exceed.'
+    end
+    alias_method :simplify, :reduce
+
+    def apply(expr, context)
+      return @body.substitute(@argument, expr)
     end
 
-    def apply_step(expr, context)
-      @body.substitute(@argument, expr)
-      return simplify(context)
-    end
-
-
-    def apply(expr, context, limit = REDUCTION_LIMITS)
-      result = @body.substitute(@argument, expr)
-      result = result.simplify(context, limit) if Lambda === result
-
-      if limit <= 0
-        warn 'step limit exceeded;'
-        return result
-      end
-
-      if Application === result
-        return result.reduce(context, limit - 1)
-      end
-      result
-    end
   end
 end

@@ -10,7 +10,7 @@ module Sage
 
     def ==(another)
       return false unless Application === another
-      @lambda == another.another and @applicant == another.applicant
+      @lambda == another.lambda and @applicant == another.applicant
     end
 
     def to_array
@@ -35,21 +35,22 @@ module Sage
 
     def reduce_step(context)
       lambda = @lambda.reduce_step(context)
+      return Application.new(lambda, @applicant) unless lambda == @lambda
+
       applicant = @applicant.reduce_step(context)
-      if Lambda === lambda
-        return lambda.apply_step(applicant, context)
-      else
-        return Application.new(lambda, applicant)
-      end
+      return Application.new(lambda, applicant) unless applicant == @applicant
+
+      return lambda.apply(applicant, context) if Lambda === lambda
+
+      return Application.new(lambda, applicant)
     end
     def reduce(context, limit = REDUCTION_LIMITS)
-      lambda = @lambda.reduce(context, limit - 1)
-      applicant = @applicant.reduce(context, limit - 1)
-      if Lambda === lambda
-        lambda = lambda.apply(applicant, context, limit - 1)
-      else
-        return Application.new(lambda, applicant)
+      prev = this = nil
+      limit.times do
+        prev, this = this, reduce_step(context)
+        return this if prev == prev
       end
+      warn 'reduce limit exceed.'
     end
   end
 end
