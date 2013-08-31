@@ -45,12 +45,12 @@ module Sage
       return Application.new(lambda, applicant)
     end
     def reduce(context, limit = REDUCTION_LIMITS)
-      prev = this = nil
+      prev = this = self
       limit.times do
-        prev, this = this, reduce_step(context)
-        return this if prev == prev
+        this, prev = this.reduce_step(context), this
+        return this if prev == this
       end
-      warn 'reduce limit exceed.'
+      warn 'Reduction limit exceed.'
     end
   end
 end

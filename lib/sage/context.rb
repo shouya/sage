@@ -37,12 +37,14 @@ module Sage
       :car   => '\c.c (\x.\y.x)',
       :cdr   => '\c.c (\x.\y.y)',
       :nil   => 'pair true true',
-      :ispair =>'car'
+
+      :ispair =>'car',
+      :iszero =>'\n.n (\x.false) true',
     }
 
     def load_builtin_combinators(parser = SageParser.new)
       BUILTIN_COMBINATORS.each do |name, lamb|
-        store(name, parser.parse(lamb).parse.reduce(self))
+        store(name,parser.parse(lamb).parse.reduce(self, 1000))
       end
     end
   end

@@ -68,7 +68,7 @@ module Sage
       prev = this = nil
       limit.times do
         prev, this = this, reduce_step(context)
-        return this if prev == prev
+        return this if prev == this
       end
       warn 'Reduction limit exceed.'
     end

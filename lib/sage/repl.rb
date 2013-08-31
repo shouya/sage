@@ -132,7 +132,7 @@ module Sage
           puts "#{n}: #{prev}"
           return if this == prev
         end
-        puts "Reduce limit exceeded."
+        puts "Reduction limit exceeded."
       else
         puts show_lambda(eval_lambda(lambda))
       end
