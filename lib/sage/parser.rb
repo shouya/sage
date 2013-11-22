@@ -1,10 +1,10 @@
 require 'treetop'
 
-require File.expand_path('parser_nodes', File.dirname(__FILE__))
+require_relative 'parser_nodes'
 Treetop.load(File.expand_path('parser.treetop', File.dirname(__FILE__)))
 
 # debug:
-#require File.expand_path('my_parser', File.dirname(__FILE__))
+#require_relative 'my_parser'
 
 class Sage::SageParser
   alias_method :__parse, :parse

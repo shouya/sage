@@ -1,6 +1,6 @@
 
-require File.expand_path('utilities', File.dirname(__FILE__))
-require File.expand_path('context', File.dirname(__FILE__))
+require_relative 'utilities'
+require_relative 'context'
 
 module Sage
   class Lambda

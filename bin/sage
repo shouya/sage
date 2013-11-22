@@ -2,8 +2,7 @@
 #
 # Sage REPL
 #
-
-require File.expand_path('../lib/sage/repl', File.dirname(__FILE__))
+require_relative '../lib/sage/repl'
 
 
 Sage::REPL.new.start if __FILE__ == $0

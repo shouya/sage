@@ -1,8 +1,8 @@
 
 
-require File.expand_path('sage/parser', File.dirname(__FILE__))
-require File.expand_path('sage/identifier', File.dirname(__FILE__))
-require File.expand_path('sage/lambda', File.dirname(__FILE__))
-require File.expand_path('sage/application', File.dirname(__FILE__))
-require File.expand_path('sage/context', File.dirname(__FILE__))
+require_relative 'sage/parser'
+require_relative 'sage/identifier'
+require_relative 'sage/lambda'
+require_relative 'sage/application'
+require_relative 'sage/context'
 

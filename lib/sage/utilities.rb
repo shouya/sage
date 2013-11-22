@@ -1,7 +1,7 @@
 
-require File.expand_path('identifier', File.dirname(__FILE__))
-require File.expand_path('lambda', File.dirname(__FILE__))
-require File.expand_path('application', File.dirname(__FILE__))
+require_relative 'identifier'
+require_relative 'lambda'
+require_relative 'application'
 
 
 module Sage
