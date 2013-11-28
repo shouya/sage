@@ -2,7 +2,7 @@
 Yet another lambda calculus interpreter
 
 ## Requirements
-Tested with Ruby 2.0, but Ruby 1.8+ should also work.
+Tested with Ruby 2.0, but Ruby 1.9+ should also work.
 
 You need to install the gem `treetop`.
 
@@ -20,7 +20,7 @@ $ bin/sage
 ```
 
 ## REPL Usage
-Just simply input your &lambda; expression and *sage* will evaluate it.
+Just simply input your &lambda; expressions and *sage* will evaluate it.
 ```
 sage> (\x.\y.y) x y
 1: (\x.\y.y) x y
@@ -39,7 +39,7 @@ sage> flip (\x.\y.x) a b
 b
 ```
 
-They're also undefinable:
+You can also undefine them:
 ```
 sage> :undef flip
 sage> flip
@@ -73,18 +73,18 @@ The options available now are:
 }
 ```
 
-- reduce: determine whether it hold the value or reduce it
-- step: display reduction step
-- onestep: only reduce once for the expressions
-- limit: reduction step number limit. those over this limit will be
+- reduce: determine whether it holds the value or reduces it
+- step: display reduction steps
+- onestep: only reduce for one step
+- limit: number of step limit for reduction. those over this limit will be
   interrupted
-- textout: output text instead of ruby array as result
+- textout: output text instead of a raw ruby array as result
 - parseresult: if the result has a matched predefined name, display it
 
 You can input commands like:
 ```
-sage> :set -step         # turn on step
-sage> :set +onestep      # turn off onestep
+sage> :set -step         # turn off step
+sage> :set +onestep      # turn on onestep
 sage> :set limit 30      # set limit to 30
 ```
 
